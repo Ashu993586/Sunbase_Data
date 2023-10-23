@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client List</title>
+    <!-- Include jQuery and Animate.css libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        #filterContainer {
+            margin-bottom: 20px;
+        }
+
+        #filterDropdown {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        #clientList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #clientList li {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        #popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            animation: fadeInUp 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+
+<!-- UI elements -->
+<div id="filterContainer">
+    <label for="filterDropdown">Filter:</label>
+    <select id="filterDropdown">
+        <option value="all">All clients</option>
+        <option value="managers">Managers only</option>
+        <option value="nonManagers">Non-managers</option>
+    </select>
+</div>
+
+<ul id="clientList">
+    <!-- List of clients will be dynamically populated here -->
+</ul>
+
+<!-- Popup window for client details -->
+<div id="popup">
+    <p id="popupName"></p>
+    <p id="popupPoints"></p>
+    <p id="popupAddress"></p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.0.3/doT.min.js"></script>
+
+<script>
+    // Provided JSON data
+    const jsonData = {
+        "clients": [
+            {
+                "isManager": true,
+                "id": 1,
+                "label": "Client1"
+            },
+            {
+                "isManager": false,
+                "id": 2,
+                "label": "Client2"
+            },
+            {
+                "isManager": false,
+                "id": 3,
+                "label": "Client3"
+            },
+            {
+                "isManager": false,
+                "id": 4,
+                "label": "Client4"
+            },
+            {
+                "isManager": false,
+                "id": 5,
+                "label": "Client5"
+            }
+        ],
+        "data": {
+            "1": {
+                "address": "NY",
+                "name": "Jhon",
+                "points": 123
+            },
+            "2": {
+                "address": "NY",
+                "name": "Dan",
+                "points": 123
+            },
+            "3": {
+                "address": "NY",
+                "name": "Ben",
+                "points": 123
+            },
+            "4": {
+                "address": "NY",
+                "name": "Alex",
+                "points": 123
+            },
+            "5": {
+                "address": "NY",
+                "name": "Eva",
+                "points": 123
+            }
+        },
+        "label": "All Clients"
+    };
+
+    // Function to populate the client list
+    function populateClientList(filter) {
+        const clientList = $('#clientList');
+        clientList.empty();
+
+        jsonData.clients.forEach(client => {
+            if (filter === 'all' || (filter === 'managers' && client.isManager) || (filter === 'nonManagers' && !client.isManager)) {
+                const listItem = $('<li>').text(`${client.label} - ${jsonData.data[client.id].points}`);
+                listItem.click(() => showPopup(client.id));
+                clientList.append(listItem);
+            }
+        });
+    }
+
+    // Function to show the popup with client details
+    function showPopup(clientId) {
+        const popup = $('#popup');
+        const clientData = jsonData.data[clientId];
+        $('#popupName').text(`Name: ${clientData.name}`);
+        $('#popupPoints').text(`Points: ${clientData.points}`);
+        $('#popupAddress').text(`Address: ${clientData.address}`);
+
+        // Use Animate.css for fade in animation
+        popup.addClass('animate__animated animate__fadeInUp').fadeIn().delay(2000).fadeOut();
+    }
+
+    // Event listener for filter dropdown change
+    $('#filterDropdown').change(function () {
+        const filter = $(this).val();
+        populateClientList(filter);
+    });
+
+    // Initial population of client list with 'All clients' filter
+    populateClientList('all');
+</script>
+
+</body>
+</html>
